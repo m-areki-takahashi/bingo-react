@@ -1,7 +1,7 @@
-import { generateRandom } from "../funcs/common";
-import { BingoAnalyzer } from "../funcs/gameManage";
-import { prepareSheetNumbers } from "../funcs/generateSheetNumbes";
-import { TGameConfig, TGameStates } from "./BingoSheet";
+import { generateRandom } from "./common";
+import { BingoAnalyzer } from "./gameManage";
+import { prepareSheetNumbers } from "./generateSheetNumbes";
+import { TGameConfig, TGameStates } from "../components/Bingo";
 
 export const generateGameConfig = (param?: { row: number, max: number }): TGameConfig => ({
     settings: {

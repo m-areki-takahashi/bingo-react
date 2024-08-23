@@ -1,5 +1,5 @@
 import React from 'react';
-import { BingoSheetType } from './BingoSheet';
+import { BingoSheetType } from './Bingo';
 
 type TRow = {
   sheetNumbers: BingoSheetType[][],

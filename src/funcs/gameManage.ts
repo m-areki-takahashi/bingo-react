@@ -1,4 +1,4 @@
-import { TGameConfig } from "../components/BingoSheet";
+import { TGameConfig } from "../components/Bingo";
 import { getTagName } from "./common";
 
 type HitSheet = string[][];

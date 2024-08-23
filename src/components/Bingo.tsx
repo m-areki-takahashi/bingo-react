@@ -3,7 +3,13 @@ import { Row } from './Row';
 import { Text } from './base/Text';
 import { Settings } from './Settings';
 import { OutBall } from './OutBall';
-import { generateGameConfig, generateGameStatesInit, isGameFinished, resetHitStateOnBingoSheet, updateGameStates } from './default';
+import {
+  generateGameConfig,
+  generateGameStatesInit,
+  isGameFinished,
+  resetHitStateOnBingoSheet,
+  updateGameStates
+} from '../funcs/bingo';
 import { convertNumberToString } from '../funcs/common';
 import './bingo.css'
 
@@ -72,16 +78,19 @@ export const BingoSheet: React.FC<{}> = () => {
 
     if (settingsVal.row > settingsVal.max) {
       console.log('max must be more than row');
+      alert('max must be more than row');
       return;
     }
 
     if (settingsVal.row < 3 || settingsVal.max < 3) {
       console.log('row & max more than 3');
+      alert('row & max more than 3');
       return;
     }
 
-    if (settingsVal.row > 50 || settingsVal.max > 50) {
-      console.log('should row & max less than 51');
+    if (settingsVal.row > 30 || settingsVal.max > 30) {
+      console.log('should row & max less than 31');
+      alert('should row & max less than 31');
       return;
     }
 
@@ -89,19 +98,15 @@ export const BingoSheet: React.FC<{}> = () => {
   }
 
   return (
-    <div>
-      <div onClick={()=> setGameConfig({
-        ...gameConfig,
-        process: gameConfig.process === 'init' ? 'playing' : 'init',
-      })}>
-        changeProcess! now：{gameConfig.process}
-      </div>
+    <div className='container'>
       {
         gameConfig.sheetNumbers && (
           <>
-            <Settings
-              onclick={handleUpdateGameConfig}
-            />
+            <div className="settings">
+              <Settings
+                onclick={handleUpdateGameConfig}
+              />
+            </div>
             <OutBall
               btnName='Next'
               outball={
@@ -109,6 +114,10 @@ export const BingoSheet: React.FC<{}> = () => {
                 [ ${gameStates.allOutputNumber.filter(({outputted}) => outputted).length} / ${gameStates.allOutputNumber.length} ]`
               }
               onclick={handleGameProgress}
+            />
+            <Text
+              id='reachBingo'
+              text={`reach:${gameStates.reach} bingo:${gameStates.bingo}`}
             />
             <div className="bingo-sheet">
               <table>
@@ -123,10 +132,6 @@ export const BingoSheet: React.FC<{}> = () => {
                 </tbody>
               </table>
             </div>
-            <Text
-              id='reachBingo'
-              text={`reach:${gameStates.reach} bingo:${gameStates.bingo}`}
-            />
           </>
         )
       }

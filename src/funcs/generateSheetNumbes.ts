@@ -1,4 +1,4 @@
-import { BingoSheetType } from '../components/BingoSheet';
+import { BingoSheetType } from '../components/Bingo';
 import { generateRandom } from './common';
 
 

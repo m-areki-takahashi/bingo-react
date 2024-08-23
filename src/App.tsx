@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { BingoSheet } from './components/BingoSheet';
+import { BingoSheet } from './components/Bingo';
 
 function App() {
   return (
