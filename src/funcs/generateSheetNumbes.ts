@@ -8,7 +8,10 @@ const pickUniqueSheetNumber = (rowCount: number, maxNum: number): BingoSheetType
     while(pickKeys.size < rowCount){
       pickKeys.add(generateRandom(maxNum, true));
     }
-    return Array.from(pickKeys, (col, c) => !(i === 2 && c === 2) ? i * maxNum + col + 1 : 'free')
+    const median = Math.floor(rowCount / 2);
+    return rowCount % 2 !== 0
+      ? Array.from(pickKeys, (col, c) => !(i === median && c === median) ? i * maxNum + col + 1 : 'free')
+      : Array.from(pickKeys, (col, c) => i * maxNum + col + 1)
   })
   return sheetNum.flat();
 }
