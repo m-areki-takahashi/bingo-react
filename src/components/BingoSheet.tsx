@@ -51,8 +51,10 @@ export const BingoSheet: React.FC<{}> = () => {
   }, [gameConfig])
 
   const handleGameProgress = () => {
-    const newGameStates = updateGameStates(gameStates, gameConfig)
-    newGameStates && setGameStates(newGameStates);
+    if (!isGameFinished()){
+      const newGameStates = updateGameStates(gameStates, gameConfig)
+      newGameStates && setGameStates(newGameStates);
+    }
     // eslint-disable-next-line no-restricted-globals
     const retry = isGameFinished() && (confirm('game clear! play one more?'))
     retry && setGameConfig(generateGameConfig({
@@ -75,6 +77,11 @@ export const BingoSheet: React.FC<{}> = () => {
 
     if (settingsVal.row < 3 || settingsVal.max < 3) {
       console.log('row & max more than 3');
+      return;
+    }
+
+    if (settingsVal.row > 50 || settingsVal.max > 50) {
+      console.log('should row & max less than 51');
       return;
     }
 
