@@ -1,5 +1,4 @@
 import { TGameConfig } from "../components/Bingo";
-import { getTagName } from "./common";
 
 type HitSheet = string[][];
 type RBcount = number[];
@@ -19,35 +18,16 @@ export class BingoAnalyzer {
         this._sideLength = this._gameConfig.settings.side;
     }
 
-    // ビンゴシート同じ型の２次元配列を生成する
-    private generateHitSheet = (): HitSheet => (
-      Array.from({ length: this._sideLength }, () => (
-        Array.from<string>({ length: this._sideLength }).fill('')
-      ))
-    );
-
     // 現在のビンゴシートのヒット状態を取得する
-    private getHitState =(): HitSheet => {
-        const trs: Element[] = Array.from(getTagName("tr"));
-        const hitSheet: HitSheet = this.generateHitSheet();
-        trs.forEach((tr, i: number) => {
-            if(i !== 0){
-                const tds: Element[] = Array.from(tr.children);
-                tds.forEach((td, n: number) => {
-                    if(td.className === "hit") hitSheet[i-1][n] = "h";
-                });
-            }
-        });
-        return hitSheet;
-    }
+    private getHitState =(): HitSheet => [...document.getElementsByTagName('tr')].slice(1)
+        .map((row) => [...row.children].map((col) => col.classList.contains('hit') ? 'h' : ''))
 
     // 行視点でリーチとビンゴ数を算出
     private getReachBingoCount = (arg: CheckHit) => {
         const {hitSheet, counts} = arg;
 
-        const rowHitCounts = hitSheet.map((row) => (
-            row.filter((col) => col === 'h').length
-        ));
+        const rowHitCounts = hitSheet
+            .map((row) => row.filter((col) => col === 'h').length);
         const reachOrBingo = rowHitCounts.filter((row) => row >= this._sideLength - 1);
         const newCounts: RBcount = [
             counts[0] + reachOrBingo.filter((row) => row === this._sideLength - 1).length,
@@ -57,25 +37,22 @@ export class BingoAnalyzer {
     }
 
     //横列のビンゴチェック
-    private checkHitRow =(arg: CheckHit) => {
-        const {hitSheet,counts} = arg
-        return this.getReachBingoCount({hitSheet,counts});
-    }
+    private checkHitRow =(arg: CheckHit) => this.getReachBingoCount(arg)
 
     // ビンゴシートの縦方向チェックのために列視点を行視点で見れるように整形する
-    private convertHitSheetForColumn = (hitSheet: HitSheet): HitSheet => {
-        const hitSheetForColumn = Array.from({ length: this._sideLength}, (_, r) => (
-            Array.from({ length: this._sideLength}, (_, c) => hitSheet[r][c])
-        ));
-        return hitSheetForColumn;
-    }
+    private convertHitSheetForColumn = (hitSheet: HitSheet): HitSheet => (
+        Array.from({ length: this._sideLength}, (_, r) => (
+            Array.from({ length: this._sideLength}, (_, c) => hitSheet[c][r])
+        ))
+    );
 
     //縦列のビンゴチェック
     private checkHitCol =(arg: CheckHit) => {
-        const {hitSheet, counts} = arg;
+        const {hitSheet} = arg;
         const hitSheetForColumn = this.convertHitSheetForColumn(hitSheet);
+        console.log(hitSheetForColumn)
 
-        return this.getReachBingoCount({hitSheet: hitSheetForColumn, counts: counts});
+        return this.getReachBingoCount({ ...arg, hitSheet: hitSheetForColumn });
     }
 
     //ななめのビンゴチェック
@@ -87,8 +64,8 @@ export class BingoAnalyzer {
             })
         )
         const crossCount = [
-            crossHitState.filter((hitState) => hitState.slash).length,
-            crossHitState.filter((hitState) => hitState.bSlash).length,
+            crossHitState.filter((hitState) => hitState.slash === 'h').length,
+            crossHitState.filter((hitState) => hitState.bSlash === 'h').length,
         ];
         const convertToHitCount = [
             crossCount.filter((count) => count === hitSheet.length - 1).length + counts[0],
@@ -99,10 +76,12 @@ export class BingoAnalyzer {
 
     // 縦・横・斜めのリーチ数とビンゴ数を算出
     private getAllRBCounts = (arg: CheckHit): RBcount => {
-        const { hitSheet, counts } = arg;
-        const row: RBcount = this.checkHitRow({hitSheet,counts});
-        const col: RBcount = this.checkHitCol({hitSheet,counts: row});
-        const x: RBcount = this.checkHitCross({hitSheet,counts: col});
+        const row: RBcount = this.checkHitRow(arg);
+        const col: RBcount = this.checkHitCol({...arg, counts: row});
+        const x: RBcount = this.checkHitCross({...arg, counts: col});
+        console.log(row)
+        console.log(col)
+        console.log(x)
         return x;
     }
 
@@ -113,6 +92,7 @@ export class BingoAnalyzer {
 
         // ビンゴシートと同配置 && hitしてる箇所には'h'が入った２次元配列
         const hitSheet: HitSheet = this.getHitState();
+        console.log(hitSheet)
 
         //縦横斜めのリーチとビンゴを精査
         const results: RBcount = this.getAllRBCounts({ hitSheet, counts })

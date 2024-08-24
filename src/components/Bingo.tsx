@@ -77,20 +77,17 @@ export const BingoSheet: React.FC<{}> = () => {
     if (!settingsVal) return;
 
     if (settingsVal.row > settingsVal.max) {
-      console.log('max must be more than row');
       alert('max must be more than row');
       return;
     }
 
     if (settingsVal.row < 3 || settingsVal.max < 3) {
-      console.log('row & max more than 3');
-      alert('row & max more than 3');
+      alert('row & max must be more than 3');
       return;
     }
 
-    if (settingsVal.row > 30 || settingsVal.max > 30) {
-      console.log('should row & max less than 31');
-      alert('should row & max less than 31');
+    if (settingsVal.row > 20 || settingsVal.max > 20) {
+      alert('should row & max less than 21');
       return;
     }
 
@@ -122,10 +119,12 @@ export const BingoSheet: React.FC<{}> = () => {
             <div className="bingo-sheet">
               <table>
                 <tbody>
+                  <tr>
                   {
                     Array.from<string>({length: gameConfig.settings.side})
                       .map((val, i) => (<th key={i}>{i  + 1}</th>))
                   }
+                  </tr>
                   <Row
                    sheetNumbers={gameConfig.sheetNumbers}
                   />
