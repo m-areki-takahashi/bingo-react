@@ -20,6 +20,10 @@
   align-items: center;
 }
 
+.outBall {
+  display: flex;
+}
+
 .bingo-sheet table {
   border-collapse: collapse;
   width: 100%;

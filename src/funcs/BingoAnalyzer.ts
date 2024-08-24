@@ -79,13 +79,10 @@ export class BingoAnalyzer {
         const row: RBcount = this.checkHitRow(arg);
         const col: RBcount = this.checkHitCol({...arg, counts: row});
         const x: RBcount = this.checkHitCross({...arg, counts: col});
-        console.log(row)
-        console.log(col)
-        console.log(x)
         return x;
     }
 
-
+    // リーチ・ビンゴ数管理
     checkReach_Bingo = () => {
         // [reach, bingo]
         const counts: RBcount = [0, 0];

@@ -2,6 +2,7 @@ import { BingoSheetType } from '../components/Bingo';
 import { generateRandom } from './common';
 
 
+// シート用数字を生成
 const pickUniqueSheetNumber = (rowCount: number, maxNum: number): BingoSheetType[] => {
   const pickKeys = new Set<number>();
   while(pickKeys.size < rowCount){
@@ -17,6 +18,7 @@ const pickUniqueSheetNumber = (rowCount: number, maxNum: number): BingoSheetType
   return sheetNum.flat();
 }
 
+// １次元で管理してるシート用数字を２次元に並び替え
 const sortOutputNumbers = (
   pickOutputNumbers: BingoSheetType[],
   rowCount: number
@@ -31,6 +33,7 @@ const sortOutputNumbers = (
   return sheetNumber;
 }
 
+// BingoSheet用数字配列の生成管理
 export const prepareSheetNumbers = (rowCount: number, maxColNum: number): BingoSheetType[][] => {
   // 列数*列の条件幅分の配列を作る
   const pickSheetNumber: BingoSheetType[] = pickUniqueSheetNumber(rowCount, maxColNum);

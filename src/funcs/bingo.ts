@@ -1,8 +1,9 @@
-import { generateRandom } from "./common";
-import { BingoAnalyzer } from "./gameManage";
+import { convertNumberToString, generateRandom } from "./common";
+import { BingoAnalyzer } from "./BingoAnalyzer";
 import { prepareSheetNumbers } from "./generateSheetNumbes";
 import { TGameConfig, TGameStates } from "../components/Bingo";
 
+// useStateのgameConfigを生成する
 export const generateGameConfig = (param?: { row: number, max: number }): TGameConfig => ({
     settings: {
         side: param?.row || 5,
@@ -12,6 +13,7 @@ export const generateGameConfig = (param?: { row: number, max: number }): TGameC
     process: 'playing',
 });
 
+// useStateのgameStatesを生成する
 export const generateGameStatesInit = (gameConfig: TGameConfig): TGameStates => {
     return {
         allOutputNumber: generateAllOutputNumber(gameConfig),
@@ -21,6 +23,7 @@ export const generateGameStatesInit = (gameConfig: TGameConfig): TGameStates => 
     }
 };
 
+// ゲーム進行処理をして、gameStatesを更新
 export const updateGameStates = (
     gameStates: TGameStates,
     gameConfig: TGameConfig
@@ -41,6 +44,7 @@ export const updateGameStates = (
     return ret;
 };
 
+// 出力可能性のある数字をランダムな順序で全て生成する
 const generateAllOutputNumber = (gameConfig: TGameConfig) => {
     const { side, range } = gameConfig.settings
     const allOutputCount = side * range;
@@ -54,11 +58,13 @@ const generateAllOutputNumber = (gameConfig: TGameConfig) => {
     }));
 };
 
+// ゲーム終了確認
 export const isGameFinished = () => {
     const cells = document.getElementsByClassName('cell');
     return !([...cells].find((cell) => !cell.className.includes('hit')));
 };
 
+// 出力数字と一致するシートを削除
 const updateHitState = (next: number) => {
     const cells = document.getElementsByClassName('cell');
     for(const cell of cells) {
@@ -67,10 +73,13 @@ const updateHitState = (next: number) => {
     };
 };
 
-export const resetHitStateOnBingoSheet = () => {
-    const cells = document.getElementsByClassName('cell');
-    [...cells].forEach((cell) => (
-        // cell.className = cell.textContent !== 'free' ? 'cell' : 'cell hit'
-        cell.textContent !== 'free' && cell.classList.remove('hit')
-    ))
-}
+// ゲームリスタート時にシートのhit状態をリセット
+export const resetHitStateOnBingoSheet = () => (
+    [...document.getElementsByClassName('cell')]
+        .forEach((cell) => cell.textContent !== 'free' && cell.classList.remove('hit'))
+);
+
+export const generateOutBallText = (gameStates: TGameStates, settings: { side: number, range: number }) => (
+    `${convertNumberToString(gameStates.now, settings)}
+     [ ${gameStates.allOutputNumber.filter(({outputted}) => outputted).length} / ${gameStates.allOutputNumber.length} ]`
+);
