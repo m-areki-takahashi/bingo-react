@@ -6,11 +6,11 @@ import { OutBall } from './OutBall';
 import {
   generateGameConfig,
   generateGameStatesInit,
+  generateOutBallText,
   isGameFinished,
   resetHitStateOnBingoSheet,
   updateGameStates
 } from '../funcs/bingo';
-import { convertNumberToString } from '../funcs/common';
 import './bingo.css'
 
 export type BingoSheetType = (number | 'free');
@@ -107,8 +107,7 @@ export const BingoSheet: React.FC<{}> = () => {
             <OutBall
               btnName='Next'
               outball={
-                `${convertNumberToString(gameStates.now, gameConfig.settings)}
-                [ ${gameStates.allOutputNumber.filter(({outputted}) => outputted).length} / ${gameStates.allOutputNumber.length} ]`
+                generateOutBallText(gameStates, gameConfig.settings)
               }
               onclick={handleGameProgress}
             />

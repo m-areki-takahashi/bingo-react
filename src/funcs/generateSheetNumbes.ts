@@ -1,5 +1,5 @@
 import { BingoSheetType } from '../components/Bingo';
-import { generateRandom } from './common';
+import { generateRandom } from './bingo';
 
 
 // シート用数字を生成

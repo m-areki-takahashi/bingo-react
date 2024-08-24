@@ -1,4 +1,3 @@
-import { convertNumberToString, generateRandom } from "./common";
 import { BingoAnalyzer } from "./BingoAnalyzer";
 import { prepareSheetNumbers } from "./generateSheetNumbes";
 import { TGameConfig, TGameStates } from "../components/Bingo";
@@ -44,6 +43,13 @@ export const updateGameStates = (
     return ret;
 };
 
+// 0 < n <= max か o <= n < maxか選べる乱数生成
+export const generateRandom = (max: number, include0: boolean = false): number => (
+    include0
+    ? max > 3 ? Math.floor(Math.random() * max) : max - 1
+    : Math.floor(Math.random() * max) + 1
+);
+
 // 出力可能性のある数字をランダムな順序で全て生成する
 const generateAllOutputNumber = (gameConfig: TGameConfig) => {
     const { side, range } = gameConfig.settings
@@ -79,7 +85,16 @@ export const resetHitStateOnBingoSheet = () => (
         .forEach((cell) => cell.textContent !== 'free' && cell.classList.remove('hit'))
 );
 
+// 引数でもらった数字にgameConfig.settingsのside*rangeの桁数に足りてない桁数分先頭に０をつける
+const convertNumberToAdd0String = (val: number, setting: { side: number, range: number }) => {
+  const { side, range } = setting;
+  const maxLength = String(side * range).length;
+  const addStr = Array.from({ length: maxLength - String(val).length}).fill('0').join('');
+  return addStr + String(val);
+};
+
+// <OutBall /> 
 export const generateOutBallText = (gameStates: TGameStates, settings: { side: number, range: number }) => (
-    `${convertNumberToString(gameStates.now, settings)}
+    `${convertNumberToAdd0String(gameStates.now, settings)}
      [ ${gameStates.allOutputNumber.filter(({outputted}) => outputted).length} / ${gameStates.allOutputNumber.length} ]`
 );
